@@ -9,9 +9,9 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Accountant Email Assistant"/>
   <Description DefaultValue="Email assistant for accountants using Claude AI"/>
-  <IconUrl DefaultValue="https://your-project-name.vercel.app/icon.png"/>
-  <HighResolutionIconUrl DefaultValue="https://your-project-name.vercel.app/icon-high.png"/>
-  <SupportUrl DefaultValue="https://your-domain.com/help"/>
+  <IconUrl DefaultValue="https://raw.githubusercontent.com/grantweston/AccountingWebAppAndOutlookAddIn/614efbabe2d30ec20a534e5c564b32f39cb92712/icon.png"/>
+  <HighResolutionIconUrl DefaultValue="https://raw.githubusercontent.com/grantweston/AccountingWebAppAndOutlookAddIn/614efbabe2d30ec20a534e5c564b32f39cb92712/icon-high.png"/>
+  <SupportUrl DefaultValue="https://accounting-webapp-and-outlook-addin-opxcr3be1.vercel.app/help"/>
   <Hosts>
     <Host Name="Mailbox"/>
   </Hosts>
@@ -23,8 +23,8 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://your-project-name.vercel.app"/>
-        <RequestedHeight>250</RequestedHeight>
+        <SourceLocation DefaultValue="https://accounting-webapp-and-outlook-addin-opxcr3be1.vercel.app/outlook"/>
+        <RequestedHeight>450</RequestedHeight>
       </DesktopSettings>
     </Form>
   </FormSettings>
