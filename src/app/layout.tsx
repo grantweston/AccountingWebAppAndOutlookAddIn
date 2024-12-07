@@ -24,29 +24,39 @@ export default function RootLayout({
       <head>
         {environment === 'outlook-addin' && (
           <>
-            <Script 
+            <script 
               src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
-              strategy="beforeInteractive"
-              id="office-js"
+              type="text/javascript"
             />
             <Script
               id="office-init"
-              strategy="afterInteractive"
+              strategy="beforeInteractive"
             >
               {`
-                function initializeOffice() {
-                  console.log('[Layout] Injecting Office.js initialization');
-                  if (window.Office) {
+                (function initOffice() {
+                  console.log('[Layout] Starting Office initialization');
+                  
+                  if (typeof Office === 'undefined') {
+                    console.log('[Layout] Office not found, retrying in 100ms');
+                    setTimeout(initOffice, 100);
+                    return;
+                  }
+
+                  try {
+                    console.log('[Layout] Setting up Office.initialize');
                     Office.initialize = function(reason) {
-                      console.log('[Layout] Office initialized with reason:', reason);
+                      console.log('[Layout] Office initialized!', {
+                        reason,
+                        hasContext: !!Office.context,
+                        hasMailbox: !!Office.context?.mailbox,
+                        timestamp: new Date().toISOString()
+                      });
                       window.Office.initialized = true;
                     };
-                  } else {
-                    console.error('[Layout] Office object not available during initialization');
-                    setTimeout(initializeOffice, 100); // retry if Office isn't available
+                  } catch (error) {
+                    console.error('[Layout] Error during initialization:', error);
                   }
-                }
-                initializeOffice();
+                })();
               `}
             </Script>
           </>

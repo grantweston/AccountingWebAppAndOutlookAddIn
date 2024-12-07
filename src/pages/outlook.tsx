@@ -20,7 +20,7 @@ export default function OutlookPage() {
 
     // Wait for Office to be initialized
     const checkOfficeReady = () => {
-      if (window.Office?.initialized) {
+      if (window?.Office?.initialized) {
         console.log('[OutlookPage] Office is ready');
         setIsOfficeReady(true);
       } else {
