@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  security: {
+    dangerouslyDisableDefaultSecurity: true
+  },
   async headers() {
     return [
       {
@@ -9,7 +12,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'https://outlook.live.com https://*.outlook.com https://*.outlook.office.com https://*.outlook.office365.com https://*.microsoft.com'
+            value: '*'
           },
           {
             key: 'Access-Control-Allow-Methods',
@@ -24,12 +27,8 @@ const nextConfig = {
             value: 'true'
           },
           {
-            key: 'X-Frame-Options',
-            value: 'ALLOW-FROM https://outlook.live.com'
-          },
-          {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://outlook.live.com https://*.outlook.com https://*.outlook.office.com https://*.outlook.office365.com; connect-src 'self' https://*.microsoft.com https://*.office.net https://*.office.com https://*.live.com; style-src 'self' 'unsafe-inline'"
+            value: "default-src 'self' https://*.live.com https://*.microsoft.com https://*.office.com https://*.office365.com; frame-ancestors 'self' https://*.live.com https://*.outlook.com https://*.office.com https://*.office365.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.microsoft.com https://*.office.com; connect-src 'self' https://*.microsoft.com https://*.office.net https://*.office.com https://*.live.com"
           }
         ],
       }
