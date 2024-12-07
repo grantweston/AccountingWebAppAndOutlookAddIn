@@ -5,20 +5,40 @@ import { isOfficeEnvironment } from '@/utils/environment';
 
 export default function OutlookPage() {
   useEffect(() => {
-    console.log('OutlookPage mounted');
+    console.log('[OutlookPage] Mounting...');
     
     if (!isOfficeEnvironment()) {
-      console.warn('This page requires Outlook context');
+      console.warn('[OutlookPage] Not in Office environment');
+      console.debug('[OutlookPage] Window.Office:', typeof window !== 'undefined' ? !!window.Office : 'no window');
       return;
     }
 
     Office.onReady((info) => {
-      console.log('Office.js Ready:', info);
+      console.log('[OutlookPage] Office.js Ready:', info);
+      
       if (info.host === Office.HostType.Outlook) {
-        console.log('Outlook Add-in initialized');
-        console.log('Current item:', Office.context.mailbox.item);
+        console.log('[OutlookPage] Outlook Add-in initialized');
+        try {
+          console.log('[OutlookPage] Mailbox:', Office.context.mailbox);
+          console.log('[OutlookPage] Current item:', Office.context.mailbox.item);
+          console.log('[OutlookPage] Host info:', {
+            platform: Office.context.platform,
+            host: Office.context.host,
+            diagnostics: Office.context.diagnostics
+          });
+        } catch (error) {
+          console.error('[OutlookPage] Error accessing Office context:', error);
+        }
+      } else {
+        console.warn('[OutlookPage] Not in Outlook context:', info.host);
       }
+    }).catch(error => {
+      console.error('[OutlookPage] Office.onReady error:', error);
     });
+
+    return () => {
+      console.log('[OutlookPage] Unmounting...');
+    };
   }, []);
 
   return (
