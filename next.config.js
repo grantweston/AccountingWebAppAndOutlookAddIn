@@ -11,7 +11,7 @@ const nextConfig = {
       return config;
     },
     env: {
-      CLAUDE_API_KEY: process.env.CLAUDE_API_KEY,
+      CLAUDE_API_KEY: process.env.CLAUDE_API_KEY || '',
     },
     experimental: {
       turbo: {

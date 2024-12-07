@@ -5,7 +5,10 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <script src={`//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`} />
+        <script 
+          src={`//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`}
+          async
+        />
       </Head>
       <body className="antialiased">
         <Main />
