@@ -12,15 +12,28 @@ export const OutlookEditor = () => {
   const MAX_ERRORS = 3;
 
   const checkContent = async () => {
+    console.log('[OutlookEditor] Checking content...');
     try {
       if (!Office?.context?.mailbox?.item) {
+        console.error('[OutlookEditor] Office context not available:', {
+          Office: !!Office,
+          context: !!Office?.context,
+          mailbox: !!Office?.context?.mailbox,
+          item: !!Office?.context?.mailbox?.item
+        });
         throw new Error('Outlook context not available');
       }
 
+      console.log('[OutlookEditor] Getting email body...');
       const result = await new Promise<Office.AsyncResult<string>>((resolve) => {
-        Office.context.mailbox.item.body.getAsync(Office.CoercionType.Text, resolve);
+        Office.context.mailbox.item.body.getAsync(Office.CoercionType.Text, (result) => {
+          console.log('[OutlookEditor] getAsync result:', result);
+          resolve(result);
+        });
       });
+
       if (result.status !== Office.AsyncResultStatus.Succeeded) {
+        console.error('[OutlookEditor] Failed to get email content:', result.error);
         throw new Error(`Failed to get email content: ${result.error?.message}`);
       }
 
@@ -59,18 +72,8 @@ export const OutlookEditor = () => {
         }
       }
     } catch (error) {
-      errorCount.current++;
-      console.error('Error in OutlookEditor:', {
-        error,
-        errorCount: errorCount.current,
-        timestamp: new Date().toISOString()
-      });
-
-      // Stop polling if too many errors
-      if (errorCount.current >= MAX_ERRORS) {
-        console.error('Too many errors, stopping content monitoring');
-        clearInterval(pollingInterval.current);
-      }
+      console.error('[OutlookEditor] Error in checkContent:', error);
+      throw error;
     }
   };
 
