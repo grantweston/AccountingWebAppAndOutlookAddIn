@@ -19,7 +19,10 @@ const nextConfig = {
           // Add any Turbo-specific rules here
         }
       }
-    }
+    },
+    optimizeFonts: true,
+    swcMinify: true,
+    assetPrefix: process.env.NODE_ENV === 'production' ? 'https://your-domain.com' : '',
   };
   
   module.exports = nextConfig;
