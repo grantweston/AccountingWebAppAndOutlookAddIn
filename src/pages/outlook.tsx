@@ -14,34 +14,22 @@ export default function OutlookPage() {
     });
     
     if (!isOfficeEnvironment()) {
-      console.warn('[OutlookPage] Not in Office environment', {
-        window: typeof window,
-        Office: typeof window !== 'undefined' ? typeof window.Office : 'no window',
-        environment: process.env.NODE_ENV
-      });
+      console.warn('[OutlookPage] Not in Office environment');
       return;
     }
 
-    if (window.Office) {
-      console.log('[OutlookPage] Setting up Office.initialize');
-      Office.initialize = function(reason) {
-        console.log('[OutlookPage] Office initialized', {
-          reason,
-          context: Office.context,
-          host: Office.context?.host,
-          platform: Office.context?.platform,
-          diagnostics: Office.context?.diagnostics
-        });
-        try {
-          setIsOfficeReady(true);
-          console.log('[OutlookPage] State updated: isOfficeReady = true');
-        } catch (error) {
-          console.error('[OutlookPage] Error in initialize callback:', error);
-        }
-      };
-    } else {
-      console.error('[OutlookPage] Office object not available when setting initialize');
-    }
+    // Wait for Office to be initialized
+    const checkOfficeReady = () => {
+      if (window.Office?.initialized) {
+        console.log('[OutlookPage] Office is ready');
+        setIsOfficeReady(true);
+      } else {
+        console.log('[OutlookPage] Office not ready, retrying...');
+        setTimeout(checkOfficeReady, 100);
+      }
+    };
+
+    checkOfficeReady();
 
     return () => {
       console.log('[OutlookPage] Unmounting');
