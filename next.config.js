@@ -5,7 +5,7 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/outlook',
+        source: '/:path*',
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
@@ -24,11 +24,15 @@ const nextConfig = {
             value: 'true'
           },
           {
+            key: 'X-Frame-Options',
+            value: 'ALLOW-FROM https://outlook.live.com'
+          },
+          {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://outlook.live.com https://*.outlook.com https://*.outlook.office.com https://*.outlook.office365.com; connect-src 'self' https://*.microsoft.com https://*.office.net https://*.office.com https://*.live.com"
+            value: "frame-ancestors 'self' https://outlook.live.com https://*.outlook.com https://*.outlook.office.com https://*.outlook.office365.com; connect-src 'self' https://*.microsoft.com https://*.office.net https://*.office.com https://*.live.com; style-src 'self' 'unsafe-inline'"
           }
         ],
-      },
+      }
     ]
   }
 }
