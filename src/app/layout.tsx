@@ -26,13 +26,8 @@ export default function RootLayout({
           <Script 
             src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
             strategy="beforeInteractive"
-            onLoad={() => waitForOffice()}
-            onError={(e) => {
-              console.error('Failed to load Office.js:', e);
-              if (process.env.NODE_ENV === 'development') {
-                console.warn('Using mock Office.js in development');
-              }
-            }}
+            async={false}
+            defer={false}
           />
         )}
       </head>
