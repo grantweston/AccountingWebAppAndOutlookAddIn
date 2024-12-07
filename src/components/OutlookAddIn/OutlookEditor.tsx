@@ -45,7 +45,7 @@ export const OutlookEditor = () => {
             );
           }, currentText);
 
-          const setResult = await new Promise<Office.AsyncResult>((resolve) => {
+          const setResult = await new Promise<Office.AsyncResult<void>>((resolve) => {
             Office.context.mailbox.item.body.setAsync(
               highlightedHtml,
               { coercionType: Office.CoercionType.Html },
