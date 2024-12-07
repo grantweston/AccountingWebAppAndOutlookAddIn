@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -14,15 +14,18 @@
     "@microsoft/office-js": "^1.1.97",
     "@react-pdf/renderer": "^3.1.14",
     "@supabase/supabase-js": "^2.46.2",
+    "autoprefixer": "^10.x",
     "lodash": "^4.17.21",
     "mammoth": "^1.8.0",
     "next": "14.0.4",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^4.9.155",
+    "postcss": "^8.x",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.3.5",
     "react-pdf": "^7.7.0",
+    "tailwindcss": "^3.x",
     "uuid": "^11.0.3",
     "xlsx": "^0.18.5"
   },
@@ -39,8 +42,6 @@
     "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
     "typescript": "^5"
   },
   "builds": [
