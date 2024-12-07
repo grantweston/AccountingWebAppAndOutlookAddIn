@@ -7,43 +7,44 @@ export default function OutlookPage() {
   const [isOfficeReady, setIsOfficeReady] = useState(false);
 
   useEffect(() => {
-    console.log('[OutlookPage] Mounting...');
+    console.log('[OutlookPage] Mounting...', {
+      hasWindow: typeof window !== 'undefined',
+      hasOffice: typeof window !== 'undefined' && 'Office' in window,
+      officeObject: typeof window !== 'undefined' ? window.Office : 'no window'
+    });
     
-    // Check if we're in Office environment
     if (!isOfficeEnvironment()) {
-      console.warn('[OutlookPage] Not in Office environment');
-      console.debug('[OutlookPage] Window.Office:', typeof window !== 'undefined' ? !!window.Office : 'no window');
+      console.warn('[OutlookPage] Not in Office environment', {
+        window: typeof window,
+        Office: typeof window !== 'undefined' ? typeof window.Office : 'no window',
+        environment: process.env.NODE_ENV
+      });
       return;
     }
 
-    // Wait for Office to be ready
-    const initOffice = async () => {
-      try {
-        await new Promise((resolve) => {
-          if (window.Office) {
-            Office.onReady(() => resolve(true));
-          } else {
-            // Poll for Office object
-            const interval = setInterval(() => {
-              if (window.Office) {
-                clearInterval(interval);
-                Office.onReady(() => resolve(true));
-              }
-            }, 100);
-          }
+    if (window.Office) {
+      console.log('[OutlookPage] Setting up Office.initialize');
+      Office.initialize = function(reason) {
+        console.log('[OutlookPage] Office initialized', {
+          reason,
+          context: Office.context,
+          host: Office.context?.host,
+          platform: Office.context?.platform,
+          diagnostics: Office.context?.diagnostics
         });
-
-        setIsOfficeReady(true);
-        console.log('[OutlookPage] Office.js Ready');
-      } catch (error) {
-        console.error('[OutlookPage] Office initialization error:', error);
-      }
-    };
-
-    initOffice();
+        try {
+          setIsOfficeReady(true);
+          console.log('[OutlookPage] State updated: isOfficeReady = true');
+        } catch (error) {
+          console.error('[OutlookPage] Error in initialize callback:', error);
+        }
+      };
+    } else {
+      console.error('[OutlookPage] Office object not available when setting initialize');
+    }
 
     return () => {
-      console.log('[OutlookPage] Unmounting...');
+      console.log('[OutlookPage] Unmounting');
     };
   }, []);
 
