@@ -12,8 +12,18 @@ export const OutlookEditor = () => {
   const MAX_ERRORS = 3;
 
   const checkContent = async () => {
-    console.log('[OutlookEditor] Checking content...');
+    console.log('[OutlookEditor] Checking content...', {
+      hasOffice: typeof window !== 'undefined' && 'Office' in window,
+      officeInitialized: window?.Office?.initialized,
+      context: window?.Office?.context
+    });
+
     try {
+      if (!window?.Office?.initialized) {
+        console.warn('[OutlookEditor] Office not initialized yet');
+        return;
+      }
+
       if (!Office?.context?.mailbox?.item) {
         console.error('[OutlookEditor] Office context not available:', {
           Office: !!Office,
@@ -21,7 +31,7 @@ export const OutlookEditor = () => {
           mailbox: !!Office?.context?.mailbox,
           item: !!Office?.context?.mailbox?.item
         });
-        throw new Error('Outlook context not available');
+        return;
       }
 
       console.log('[OutlookEditor] Getting email body...');

@@ -34,14 +34,19 @@ export default function RootLayout({
               strategy="afterInteractive"
             >
               {`
-                console.log('[Layout] Injecting Office.js initialization');
-                if (window.Office) {
-                  Office.initialize = function(reason) {
-                    console.log('[Layout] Office initialized with reason:', reason);
-                  };
-                } else {
-                  console.error('[Layout] Office object not available during initialization');
+                function initializeOffice() {
+                  console.log('[Layout] Injecting Office.js initialization');
+                  if (window.Office) {
+                    Office.initialize = function(reason) {
+                      console.log('[Layout] Office initialized with reason:', reason);
+                      window.Office.initialized = true;
+                    };
+                  } else {
+                    console.error('[Layout] Office object not available during initialization');
+                    setTimeout(initializeOffice, 100); // retry if Office isn't available
+                  }
                 }
+                initializeOffice();
               `}
             </Script>
           </>
