@@ -1,9 +1,9 @@
-import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
+import * as pdfjsLib from 'pdfjs-dist';
 import { supabase } from '../Supabase/client';
 
-// Set worker
+// Set the worker source
 if (typeof window !== 'undefined') {
-  GlobalWorkerOptions.workerSrc = require('pdfjs-dist/build/pdf.worker.entry');
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 }
 
 interface StorageFile {
