@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { waitForOffice, getEnvironment } from '@/utils/environment'
+import Script from 'next/script'
 
 // Use the global Office types defined in office.d.ts
 type HostType = Office.HostType
@@ -23,24 +24,26 @@ export default function RootLayout({
       <head>
         {environment === 'outlook-addin' && (
           <>
-            <script 
+            <Script 
               src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
-              type="text/javascript"
+              strategy="beforeInteractive"
+              id="office-js"
             />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  console.log('[Layout] Injecting Office.js initialization');
-                  if (window.Office) {
-                    Office.initialize = function(reason) {
-                      console.log('[Layout] Office initialized with reason:', reason);
-                    };
-                  } else {
-                    console.error('[Layout] Office object not available during initialization');
-                  }
-                `
-              }}
-            />
+            <Script
+              id="office-init"
+              strategy="afterInteractive"
+            >
+              {`
+                console.log('[Layout] Injecting Office.js initialization');
+                if (window.Office) {
+                  Office.initialize = function(reason) {
+                    console.log('[Layout] Office initialized with reason:', reason);
+                  };
+                } else {
+                  console.error('[Layout] Office object not available during initialization');
+                }
+              `}
+            </Script>
           </>
         )}
       </head>
