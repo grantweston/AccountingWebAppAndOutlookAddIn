@@ -1,11 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { waitForOffice, getEnvironment } from '@/utils/environment'
+import { getEnvironment } from '@/utils/environment'
 import Script from 'next/script'
-
-// Use the global Office types defined in office.d.ts
-type HostType = Office.HostType
-type PlatformType = Office.PlatformType
 
 export const metadata: Metadata = {
   title: 'Accountant Email Assistant',
@@ -24,41 +20,57 @@ export default function RootLayout({
       <head>
         {environment === 'outlook-addin' && (
           <>
-            <script 
+            <Script 
               src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
-              type="text/javascript"
+              strategy="beforeInteractive"
+              onLoad={() => {
+                console.log('[Layout] Office.js loaded, window.Office:', !!window.Office);
+                if (window.Office) {
+                  console.log('[Layout] Office API version:', window.Office.context?.apiVersion);
+                }
+              }}
+              onError={(e) => {
+                console.error('[Layout] Failed to load Office.js:', e);
+              }}
             />
             <Script
               id="office-init"
-              strategy="beforeInteractive"
-            >
-              {`
-                (function initOffice() {
-                  console.log('[Layout] Starting Office initialization');
-                  
-                  if (typeof Office === 'undefined') {
-                    console.log('[Layout] Office not found, retrying in 100ms');
-                    setTimeout(initOffice, 100);
-                    return;
-                  }
-
-                  try {
-                    console.log('[Layout] Setting up Office.initialize');
-                    Office.initialize = function(reason) {
-                      console.log('[Layout] Office initialized!', {
-                        reason,
-                        hasContext: !!Office.context,
-                        hasMailbox: !!Office.context?.mailbox,
-                        timestamp: new Date().toISOString()
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  (function initOffice() {
+                    const checkInterval = setInterval(() => {
+                      console.log('[Layout] Checking for Office object...', {
+                        hasWindow: typeof window !== 'undefined',
+                        hasOffice: typeof window !== 'undefined' && 'Office' in window,
+                        initialized: window?.Office?.initialized
                       });
-                      window.Office.initialized = true;
-                    };
-                  } catch (error) {
-                    console.error('[Layout] Error during initialization:', error);
-                  }
-                })();
-              `}
-            </Script>
+                      
+                      if (typeof Office !== 'undefined') {
+                        clearInterval(checkInterval);
+                        try {
+                          console.log('[Layout] Setting up Office.initialize');
+                          Office.initialize = function(reason) {
+                            console.log('[Layout] Office initialized!', {
+                              reason,
+                              hasContext: !!Office.context,
+                              hasMailbox: !!Office.context?.mailbox,
+                              timestamp: new Date().toISOString()
+                            });
+                            window.Office.initialized = true;
+                          };
+                        } catch (error) {
+                          console.error('[Layout] Error during initialization:', error);
+                        }
+                      }
+                    }, 100);
+
+                    // Clear interval after 30 seconds to prevent infinite checking
+                    setTimeout(() => clearInterval(checkInterval), 30000);
+                  })();
+                `
+              }}
+            />
           </>
         )}
       </head>
@@ -69,4 +81,4 @@ export default function RootLayout({
       </body>
     </html>
   )
-} 
+}
