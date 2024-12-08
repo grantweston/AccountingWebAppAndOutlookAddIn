@@ -20,13 +20,16 @@ export default function RootLayout({
       <head>
         {environment === 'outlook-addin' && (
           <>
-            <script 
-              src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" 
-              type="text/javascript"
+            <Script 
+              src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
+              strategy="beforeInteractive"
+              onLoad={() => {
+                console.log('[Layout] Office.js loaded');
+              }}
             />
             <Script
               id="office-init"
-              strategy="beforeInteractive"
+              strategy="afterInteractive"
               dangerouslySetInnerHTML={{
                 __html: `
                   if (window.Office) {
