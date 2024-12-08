@@ -12,11 +12,11 @@ export function middleware(request: NextRequest) {
     'Content-Security-Policy',
     [
       "frame-ancestors *",
-      "default-src 'self' https://*.office.com https://*.microsoft.com",
+      "default-src 'self' https://*.office.com https://*.microsoft.com https://*.vercel.app https://*.supabase.co",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://appsforoffice.microsoft.com https://res.cdn.office.net https://*.office.com https://*.microsoft.com",
-      "style-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline' https://res.cdn.office.net",
       "img-src 'self' https: data:",
-      "connect-src 'self' https://*.office.com https://*.microsoft.com https://*.office365.com https://*.outlook.com",
+      "connect-src 'self' https://*.office.com https://*.microsoft.com https://*.office365.com https://*.outlook.com https://*.vercel.app https://*.supabase.co",
       "frame-src 'self' https://*.office.com https://*.microsoft.com https://*.office365.com https://*.outlook.com"
     ].join('; ')
   )

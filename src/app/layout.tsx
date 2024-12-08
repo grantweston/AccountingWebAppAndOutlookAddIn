@@ -5,7 +5,7 @@ import { getEnvironment } from '@/utils/environment'
 
 export const metadata: Metadata = {
   title: 'Accountant Email Assistant',
-  description: 'Email assistant for accountants using Claude AI',
+  description: 'Email assistant for accountants using Claude AI'
 }
 
 export default function RootLayout({
