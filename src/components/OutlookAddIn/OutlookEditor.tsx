@@ -10,6 +10,7 @@ export const OutlookEditor = () => {
   const lastVariableCount = useRef<number>(0);
   const errorCount = useRef<number>(0);
   const MAX_ERRORS = 3;
+  const [isReady, setIsReady] = useState(false);
 
   const checkContent = async () => {
     console.log('[OutlookEditor] Checking content...', {
@@ -91,16 +92,35 @@ export const OutlookEditor = () => {
   const pollingInterval = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    checkContent();
-    pollingInterval.current = setInterval(debouncedCheck, 200);
+    const waitForOffice = () => {
+      console.log('[OutlookEditor] Checking Office status:', {
+        hasWindow: typeof window !== 'undefined',
+        hasOffice: typeof window !== 'undefined' && 'Office' in window,
+        isInitialized: window?.Office?.initialized,
+        hasContext: window?.Office?.context,
+        hasMailbox: window?.Office?.context?.mailbox
+      });
 
-    return () => {
-      if (pollingInterval.current) {
-        clearInterval(pollingInterval.current);
+      if (window?.Office?.initialized && window?.Office?.context?.mailbox) {
+        console.log('[OutlookEditor] Office is ready');
+        setIsReady(true);
+        checkContent();
+      } else {
+        console.log('[OutlookEditor] Office not ready, retrying...');
+        setTimeout(waitForOffice, 100);
       }
-      debouncedCheck.cancel();
+    };
+
+    waitForOffice();
+    return () => {
+      console.log('[OutlookEditor] Unmounting');
     };
   }, []);
+
+  if (!isReady) {
+    console.log('[OutlookEditor] Waiting for Office initialization...');
+    return null;
+  }
 
   return null;
 };

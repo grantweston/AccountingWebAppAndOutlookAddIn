@@ -7,11 +7,18 @@ export default function OutlookPage() {
   const [isOfficeReady, setIsOfficeReady] = useState(false);
 
   useEffect(() => {
-    console.log('[OutlookPage] Mounting...', {
-      hasWindow: typeof window !== 'undefined',
-      hasOffice: typeof window !== 'undefined' && 'Office' in window,
-      officeObject: typeof window !== 'undefined' ? window.Office : 'no window'
-    });
+    const checkEnvironment = () => {
+      console.log('[OutlookPage] Environment check:', {
+        env: process.env.NODE_ENV,
+        isOffice: isOfficeEnvironment(),
+        hasWindow: typeof window !== 'undefined',
+        hasOffice: typeof window !== 'undefined' && 'Office' in window,
+        officeState: typeof window !== 'undefined' ? window.Office : 'no window',
+        url: window.location.href
+      });
+    };
+
+    checkEnvironment();
     
     if (!isOfficeEnvironment()) {
       console.warn('[OutlookPage] Not in Office environment');
