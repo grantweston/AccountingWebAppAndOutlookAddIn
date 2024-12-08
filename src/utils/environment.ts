@@ -11,7 +11,7 @@ export const waitForOffice = (): Promise<void> => {
       return;
     }
 
-    Office.onReady(() => {
+    window.Office?.onReady(() => {
       console.log('[Environment] Office is ready');
       resolve();
     });

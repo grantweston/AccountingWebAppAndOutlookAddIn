@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { OutlookEditor } from '@/components/OutlookAddIn/OutlookEditor';
 import { OutlookToolbar } from '@/components/OutlookAddIn/OutlookToolbar';
 
 export default function OutlookPage() {
@@ -7,48 +6,39 @@ export default function OutlookPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const isDev = process.env.NODE_ENV === 'development';
+    const urlParams = new URLSearchParams(window.location.search);
+    const isOfficeContext = urlParams.has('_host');
     
-    // In development, we can bypass the Office.js requirement
-    if (isDev) {
-      console.log('[OutlookPage] Development mode - bypassing Office.js check');
-      setIsOfficeReady(true);
+    if (!isOfficeContext) {
+      console.log('[OutlookPage] Not in Office context');
       setIsLoading(false);
       return;
     }
 
-    if (typeof Office === 'undefined') {
-      console.log('[OutlookPage] Waiting for Office.js...');
-      const checkOffice = setInterval(() => {
-        if (typeof Office !== 'undefined') {
-          clearInterval(checkOffice);
-          Office.onReady((info) => {
-            console.log('[OutlookPage] Office.onReady:', info);
-            setIsOfficeReady(true);
-            setIsLoading(false);
-          });
-        }
-      }, 100);
+    const waitForOffice = () => {
+      if (typeof window !== 'undefined' && window.Office) {
+        window.Office.onReady((info: { host: Office.HostType; platform: Office.PlatformType }) => {
+          console.log('[OutlookPage] Office.onReady:', info);
+          setIsOfficeReady(true);
+          setIsLoading(false);
+        });
+      } else {
+        console.log('[OutlookPage] Waiting for Office.js...');
+        setTimeout(waitForOffice, 100);
+      }
+    };
 
-      return () => clearInterval(checkOffice);
-    } else {
-      Office.onReady((info) => {
-        console.log('[OutlookPage] Office.onReady:', info);
-        setIsOfficeReady(true);
-        setIsLoading(false);
-      });
-    }
+    waitForOffice();
   }, []);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="outlook-container p-4">
-      <h1 className="text-xl font-bold mb-4">Accountant Email Assistant</h1>
-      <OutlookToolbar />
-      {isOfficeReady && <OutlookEditor />}
+      <h1 className="text-lg font-bold mb-4">Accountant Email Assistant</h1>
+      {isOfficeReady ? (
+        <OutlookToolbar />
+      ) : (
+        <div>Loading Office.js... {isLoading ? 'Initializing...' : 'Waiting for Outlook context'}</div>
+      )}
     </div>
   );
 }
