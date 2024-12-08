@@ -1,20 +1,22 @@
 export type AppEnvironment = 'outlook-addin' | 'web-app';
 
 export const isOfficeEnvironment = (): boolean => {
-  console.log('[Environment] Checking Office environment', {
-    hasWindow: typeof window !== 'undefined',
-    hasOffice: typeof window !== 'undefined' && 'Office' in window,
-    officeState: typeof window !== 'undefined' ? window.Office : 'no window'
+  if (typeof window === 'undefined') return false;
+  
+  // Check if we're in an iframe (Outlook add-ins run in iframes)
+  const isInIframe = window.self !== window.top;
+  
+  // Check for Office context
+  const hasOffice = 'Office' in window && window.Office !== undefined;
+  
+  console.log('[Environment] Environment check:', {
+    isInIframe,
+    hasOffice,
+    hasContext: hasOffice && 'context' in window.Office,
+    url: window.location.href
   });
-  
-  if (typeof window === 'undefined') {
-    console.log('[Environment] No window object');
-    return false;
-  }
-  
-  const hasOffice = 'Office' in window && window.Office !== undefined && window.Office !== null;
-  console.log('[Environment] Office check result:', hasOffice);
-  return hasOffice;
+
+  return isInIframe && hasOffice;
 };
 
 export const waitForOffice = (): Promise<void> => {
