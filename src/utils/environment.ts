@@ -1,25 +1,38 @@
 export type AppEnvironment = 'outlook-addin' | 'web-app';
 
-export const isOfficeEnvironment = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  return window.Office !== undefined;
+let isOfficeReadyFlag = false;
+
+export const setOfficeReady = () => {
+  isOfficeReadyFlag = true;
 };
 
-export const waitForOffice = (): Promise<void> => {
+export const isOfficeReady = () => isOfficeReadyFlag;
+
+export const initializeOffice = (): Promise<void> => {
   return new Promise((resolve) => {
     if (typeof window === 'undefined') {
       resolve();
       return;
     }
 
-    window.Office?.onReady(() => {
-      console.log('[Environment] Office is ready');
+    Office.onReady((info) => {
+      console.log('[Environment] Office initialized:', info);
+      setOfficeReady();
       resolve();
     });
+
+    // Fallback timeout after 10s
+    setTimeout(() => {
+      if (!isOfficeReadyFlag) {
+        console.warn('[Environment] Office.js initialization timed out');
+        resolve();
+      }
+    }, 10000);
   });
 };
 
 export const getEnvironment = (): AppEnvironment => {
+  // For now, always return outlook-addin. Adjust this as needed.
   return 'outlook-addin';
 };
 
@@ -28,7 +41,6 @@ export function getSupabaseConfig() {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !key) {
-    // In development, warn but don't throw
     if (process.env.NODE_ENV === 'development') {
       console.warn('Missing Supabase environment variables');
       return { url: '', key: '' };
@@ -37,4 +49,4 @@ export function getSupabaseConfig() {
   }
 
   return { url, key };
-} 
+}
