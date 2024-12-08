@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { getEnvironment } from '@/utils/environment'
+import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: 'Accountant Email Assistant',
@@ -18,9 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {environment === 'outlook-addin' && (
-          <script 
+          <Script
             src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
-            type="text/javascript"
+            strategy="beforeInteractive"
           />
         )}
       </head>
