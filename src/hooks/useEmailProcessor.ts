@@ -3,6 +3,7 @@ import { ClaudeAIClient } from '@/services/ClaudeAI/client';
 import { Variable, VariableStatus } from '@/services/VariableProcessor/types';
 import { VariableDetector } from '@/services/VariableProcessor/detector';
 import { FileProcessor } from '@/services/FileProcessor/fileProcessor';
+import { isOfficeReady } from '@/utils/environment';
 
 export const useEmailProcessor = () => {
   const [variables, setVariables] = useState<Variable[]>([]);
@@ -11,8 +12,15 @@ export const useEmailProcessor = () => {
   const processEmail = async (emailContent: string) => {
     setIsProcessing(true);
     try {
+      if (!isOfficeReady()) {
+        throw new Error('Office.js not initialized');
+      }
+
       // Get recipient's email from Outlook
       const item = Office.context.mailbox.item;
+      if (!item) {
+        throw new Error('No active email item found');
+      }
       const recipients = item?.to || [];
       const recipientEmail = recipients[0]?.emailAddress;
 

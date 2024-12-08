@@ -1,7 +1,20 @@
 import { useState } from 'react';
+import { useOutlookEmail } from '@/hooks/useOutlookEmail';
+import { useEmailProcessor } from '@/hooks/useEmailProcessor';
 
 export function OutlookToolbar() {
-  const [message, setMessage] = useState('');
+  const { emailContent, updateEmail } = useOutlookEmail();
+  const { processEmail, isProcessing } = useEmailProcessor();
+  const [message, setMessage] = useState(emailContent);
+
+  const handleProcessWithAI = async () => {
+    try {
+      const result = await processEmail(message);
+      await updateEmail(result);
+    } catch (error) {
+      console.error('Failed to process email:', error);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -18,14 +31,11 @@ export function OutlookToolbar() {
       
       <div className="flex space-x-4">
         <button 
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          onClick={handleProcessWithAI}
+          disabled={isProcessing}
+          className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
         >
-          Process with AI
-        </button>
-        <button 
-          className="bg-gray-500 text-white px-4 py-2 rounded"
-        >
-          Add Signature
+          {isProcessing ? 'Processing...' : 'Process with AI'}
         </button>
       </div>
     </div>

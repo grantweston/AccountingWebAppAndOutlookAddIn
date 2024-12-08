@@ -7,7 +7,8 @@ global.Office = {
         body: {
           getAsync: jest.fn(),
           setAsync: jest.fn()
-        }
+        },
+        to: [{ emailAddress: 'test@example.com' }]
       }
     }
   },
@@ -18,5 +19,8 @@ global.Office = {
   CoercionType: {
     Text: 'text',
     Html: 'html'
+  },
+  HostType: {
+    Outlook: 'Outlook'
   }
 }; 
