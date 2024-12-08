@@ -24,13 +24,19 @@ export default function RootLayout({
       <head>
         {environment === 'outlook-addin' && (
           <>
-            <script 
+            <Script 
               src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
-              type="text/javascript"
+              strategy="beforeInteractive"
+              onLoad={() => {
+                console.log('[Layout] Office.js loaded');
+              }}
+              onError={(e) => {
+                console.error('[Layout] Failed to load Office.js:', e);
+              }}
             />
             <Script
               id="office-init"
-              strategy="beforeInteractive"
+              strategy="afterInteractive"
             >
               {`
                 (function initOffice() {
