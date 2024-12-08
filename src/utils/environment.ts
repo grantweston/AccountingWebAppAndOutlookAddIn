@@ -19,16 +19,15 @@ export const isOfficeEnvironment = (): boolean => {
 
 export const waitForOffice = (): Promise<void> => {
   return new Promise((resolve) => {
-    if (!isOfficeEnvironment()) {
+    if (typeof window === 'undefined' || !('Office' in window)) {
       resolve();
       return;
     }
 
-    if (window.Office?.initialized) {
+    Office.onReady(() => {
+      console.log('[Environment] Office is ready');
       resolve();
-    } else {
-      window.Office.onReady(() => resolve());
-    }
+    });
   });
 };
 
