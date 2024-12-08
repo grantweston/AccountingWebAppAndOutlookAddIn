@@ -46,11 +46,11 @@ const nextConfig = {
           {
             key: 'Content-Security-Policy',
             value: [
-              "frame-ancestors *",
-              "default-src 'self' https://*.live.com https://*.microsoft.com https://*.office.com https://*.office365.com https://*.outlook.com",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.microsoft.com https://*.office.com https://*.live.com https://appsforoffice.microsoft.com https://res.cdn.office.net",
-              "style-src 'self' 'unsafe-inline'",
-              "connect-src 'self' https://*.microsoft.com https://*.office.net https://*.office.com https://*.live.com https://*.outlook.com"
+              "default-src 'self' https://*.office.com https://*.microsoft.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://appsforoffice.microsoft.com https://ajax.aspnetcdn.com https://res.cdn.office.net https://*.office.com https://*.microsoft.com https://res.cdn.office.net/owamail/hashed-v1/scripts/",
+              "img-src 'self' data: https: http:",
+              "connect-src 'self' https://*.office.com https://*.microsoft.com",
+              "frame-ancestors *"
             ].join('; ')
           }
         ],

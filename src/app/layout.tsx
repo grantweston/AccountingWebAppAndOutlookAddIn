@@ -19,10 +19,16 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {environment === 'outlook-addin' && (
-          <Script
-            src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
-            strategy="beforeInteractive"
-          />
+          <>
+            <Script
+              src="https://res.cdn.office.net/owamail/hashed-v1/scripts/owa.MsalAuth.m.5c818.js"
+              strategy="beforeInteractive"
+            />
+            <Script
+              src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
+              strategy="beforeInteractive"
+            />
+          </>
         )}
       </head>
       <body suppressHydrationWarning={true}>

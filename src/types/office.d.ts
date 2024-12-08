@@ -14,6 +14,8 @@ declare namespace Office {
       getAsync(coercionType: CoercionType, callback: (result: AsyncResult<string>) => void): void;
       setAsync(content: string, options: { coercionType: CoercionType }, callback?: (result: AsyncResult) => void): void;
     };
+    to: Array<{ emailAddress: string }>;
+    getInitializationContextAsync(callback: (result: AsyncResult<any>) => void): void;
   }
 
   interface Mailbox {
