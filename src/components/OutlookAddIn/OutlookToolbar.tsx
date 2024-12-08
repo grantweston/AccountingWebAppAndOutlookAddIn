@@ -1,51 +1,33 @@
-import React, { useState } from 'react';
-import { ClaudeAIClient } from '@/services/ClaudeAI/client';
+import { useState } from 'react';
 
-export const OutlookToolbar = () => {
-  const [question, setQuestion] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [response, setResponse] = useState('');
-
-  const handleAskClaude = async () => {
-    if (!question.trim()) return;
-    
-    setIsLoading(true);
-    try {
-      const client = new ClaudeAIClient(process.env.NEXT_PUBLIC_CLAUDE_API_KEY || '');
-      // Add Claude integration here
-      setResponse('Claude response will go here');
-    } catch (error) {
-      console.error('Error asking Claude:', error);
-      setResponse('Error communicating with Claude');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+export function OutlookToolbar() {
+  const [message, setMessage] = useState('');
 
   return (
-    <div className="p-4">
-      <h2 className="text-lg font-semibold mb-4">Ask about the document</h2>
-      <div className="space-y-4">
+    <div className="space-y-4">
+      <div className="border rounded p-4">
+        <h2 className="font-semibold mb-2">Email Assistant</h2>
         <textarea
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
           className="w-full p-2 border rounded"
-          placeholder="Ask a question about the document..."
-          rows={3}
+          rows={4}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type your message here..."
         />
-        <button
-          onClick={handleAskClaude}
-          disabled={isLoading}
-          className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+      </div>
+      
+      <div className="flex space-x-4">
+        <button 
+          className="bg-blue-500 text-white px-4 py-2 rounded"
         >
-          {isLoading ? 'Asking Claude...' : 'Ask Claude'}
+          Process with AI
         </button>
-        {response && (
-          <div className="mt-4 p-3 bg-gray-50 rounded">
-            {response}
-          </div>
-        )}
+        <button 
+          className="bg-gray-500 text-white px-4 py-2 rounded"
+        >
+          Add Signature
+        </button>
       </div>
     </div>
   );
-};
+}
