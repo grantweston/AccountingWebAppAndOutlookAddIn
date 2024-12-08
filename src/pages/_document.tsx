@@ -5,12 +5,16 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <Script
           src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
           strategy="beforeInteractive"
           id="office-js"
+          onLoad={() => {
+            console.log('[Document] Office.js loaded');
+          }}
+          onError={(e) => {
+            console.error('[Document] Error loading Office.js:', e);
+          }}
         />
       </Head>
       <body>
