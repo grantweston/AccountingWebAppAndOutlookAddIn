@@ -62,15 +62,26 @@ export const OutlookEditor = () => {
           setVariables(detected.variables);
           
           const highlightedHtml = detected.variables.reduce((html, variable) => {
+            const className = `variable-highlight ${variable.status.toLowerCase()}`;
             return html.replace(
               `[${variable.content}]`,
-              `<span style="background-color: ${getHighlightColor(variable.status)}">[${variable.content}]</span>`
+              `<span class="${className}">[${variable.content}]</span>`
             );
           }, currentText);
 
           const setResult = await new Promise<Office.AsyncResult<void>>((resolve) => {
+            // First, inject our styles
+            const styles = `
+              <style>
+                .variable-highlight { padding: 2px 0; }
+                .variable-highlight.detected { background-color: #ADD8E6; }
+                .variable-highlight.filled { background-color: #90EE90; }
+                .variable-highlight.not_found { background-color: #FFB6C1; }
+              </style>
+            `;
+            
             Office.context.mailbox.item.body.setAsync(
-              highlightedHtml,
+              styles + highlightedHtml,
               { coercionType: Office.CoercionType.Html },
               resolve
             );
