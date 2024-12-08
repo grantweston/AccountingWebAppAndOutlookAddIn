@@ -1,6 +1,5 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { getEnvironment } from '@/utils/environment'
 import Script from 'next/script'
 
 export const metadata: Metadata = {
@@ -13,17 +12,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const environment = getEnvironment();
-  
   return (
     <html lang="en">
       <head>
-        {environment === 'outlook-addin' && (
-          <Script
-            src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
-            strategy="beforeInteractive"
-          />
-        )}
+        <Script
+          src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
+          strategy="beforeInteractive"
+        />
       </head>
       <body suppressHydrationWarning={true}>
         <div id="office-container">

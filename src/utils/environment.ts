@@ -1,32 +1,12 @@
 export type AppEnvironment = 'outlook-addin' | 'web-app';
 
 export const isOfficeEnvironment = (): boolean => {
-  if (typeof window === 'undefined') return false;
-  
-  // Check URL parameters for Outlook context
-  const urlParams = new URLSearchParams(window.location.search);
-  const isOutlookHost = window.location.hostname.includes('outlook.com') || 
-                       window.location.hostname.includes('office.com') ||
-                       window.location.hostname.includes('live.com');
-  
-  // Check if we're in an iframe
-  const isInIframe = window.self !== window.top;
-  
-  console.log('[Environment] Context check:', {
-    isInIframe,
-    isOutlookHost,
-    hostname: window.location.hostname,
-    search: window.location.search,
-    hasOffice: 'Office' in window
-  });
-
-  // Return true if we're either in Outlook host or in an iframe
-  return isInIframe || isOutlookHost;
+  return true; // Temporarily force true for testing
 };
 
 export const waitForOffice = (): Promise<void> => {
   return new Promise((resolve) => {
-    if (typeof window === 'undefined' || !('Office' in window)) {
+    if (typeof window === 'undefined') {
       resolve();
       return;
     }
@@ -39,7 +19,7 @@ export const waitForOffice = (): Promise<void> => {
 };
 
 export const getEnvironment = (): AppEnvironment => {
-  return isOfficeEnvironment() ? 'outlook-addin' : 'web-app';
+  return 'outlook-addin';
 };
 
 export function getSupabaseConfig() {
