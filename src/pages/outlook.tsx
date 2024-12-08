@@ -15,20 +15,27 @@ export default function OutlookPage() {
       return;
     }
 
+    const timeout = setTimeout(() => {
+      console.error('[OutlookPage] Office.js load timeout');
+      setIsLoading(false);
+    }, 10000);
+
     const waitForOffice = () => {
       if (typeof window !== 'undefined' && window.Office) {
-        window.Office.onReady((info: { host: Office.HostType; platform: Office.PlatformType }) => {
+        clearTimeout(timeout);
+        window.Office.onReady((info) => {
           console.log('[OutlookPage] Office.onReady:', info);
           setIsOfficeReady(true);
           setIsLoading(false);
         });
       } else {
-        console.log('[OutlookPage] Waiting for Office.js...');
         setTimeout(waitForOffice, 100);
       }
     };
 
     waitForOffice();
+
+    return () => clearTimeout(timeout);
   }, []);
 
   return (

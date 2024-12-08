@@ -1,7 +1,8 @@
 export type AppEnvironment = 'outlook-addin' | 'web-app';
 
 export const isOfficeEnvironment = (): boolean => {
-  return true; // Temporarily force true for testing
+  if (typeof window === 'undefined') return false;
+  return window.Office !== undefined;
 };
 
 export const waitForOffice = (): Promise<void> => {
