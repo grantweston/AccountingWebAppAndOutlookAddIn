@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { getEnvironment } from '@/utils/environment'
 import Script from 'next/script'
+import { initializeOffice } from '@/utils/officeLoader'
 
 export const metadata: Metadata = {
   title: 'Accountant Email Assistant',
@@ -19,29 +20,17 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {environment === 'outlook-addin' && (
-          <>
-            <Script 
-              src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
-              strategy="beforeInteractive"
-              onLoad={() => {
-                console.log('[Layout] Office.js loaded');
-              }}
-            />
-            <Script
-              id="office-init"
-              strategy="afterInteractive"
-              dangerouslySetInnerHTML={{
-                __html: `
-                  if (window.Office) {
-                    Office.onReady(function(info) {
-                      console.log('[Layout] Office.onReady called:', info);
-                      window.Office.initialized = true;
-                    });
-                  }
-                `
-              }}
-            />
-          </>
+          <Script
+            id="office-loader"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                (${initializeOffice.toString()})()
+                  .then(() => console.log('[Layout] Office initialization complete'))
+                  .catch(err => console.error('[Layout] Office initialization failed:', err));
+              `
+            }}
+          />
         )}
       </head>
       <body suppressHydrationWarning={true}>

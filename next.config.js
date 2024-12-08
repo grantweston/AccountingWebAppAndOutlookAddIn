@@ -45,7 +45,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors *; default-src 'self' https://*.live.com https://*.microsoft.com https://*.office.com https://*.office365.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.microsoft.com https://*.office.com; connect-src 'self' https://*.microsoft.com https://*.office.net https://*.office.com https://*.live.com"
+            value: "frame-ancestors *; default-src 'self' https://*.live.com https://*.microsoft.com https://*.office.com https://*.office365.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://appsforoffice.microsoft.com https://res.cdn.office.net https://*.microsoft.com https://*.office.com; connect-src 'self' https://*.microsoft.com https://*.office.net https://*.office.com https://*.live.com"
           }
         ],
       }
