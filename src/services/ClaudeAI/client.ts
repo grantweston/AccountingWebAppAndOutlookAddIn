@@ -76,6 +76,8 @@ export class ClaudeAIClient {
       TAX_AMOUNT: $5,000
       MISSING_VALUE: NOT_FOUND
 
+      Make sure to keep symbols like $ and % in the value when you find them.
+      
       Variables to find: ${variables.map(v => v.content.replace(/[\[\]]/g, '')).join(', ')}`;
 
       console.log('Prompt to Claude:', prompt);
