@@ -1,13 +1,13 @@
 import { Html, Head, Main, NextScript } from "next/document";
-import * as pdfjsLib from 'pdfjs-dist';
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html>
       <Head>
-        <script src={`//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </Head>
-      <body className="antialiased">
+      <body>
         <Main />
         <NextScript />
       </body>

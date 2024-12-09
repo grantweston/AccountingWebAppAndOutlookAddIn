@@ -3,35 +3,54 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
+    "@heroicons/react": "^2.2.0",
+    "@microsoft/office-js": "^1.1.97",
+    "@react-pdf/renderer": "^3.1.14",
     "@supabase/supabase-js": "^2.46.2",
-    "@types/uuid": "^10.0.0",
+    "autoprefixer": "^10.x",
+    "lodash": "^4.17.21",
     "mammoth": "^1.8.0",
-    "next": "15.0.3",
-    "openai": "^4.76.0",
+    "next": "14.0.4",
     "pdf-lib": "^1.17.1",
-    "pdfjs-dist": "^3.11.174",
+    "pdfjs-dist": "^4.9.155",
+    "postcss": "^8.x",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.3.5",
+    "react-pdf": "^7.7.0",
+    "tailwindcss": "^3.x",
     "uuid": "^11.0.3",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/lodash": "^4.17.13",
     "@types/node": "^20",
+    "@types/office-js": "^1.0.451",
+    "@types/pdfjs-dist": "^2.10.377",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/testing-library__jest-dom": "^5.14.9",
+    "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
     "typescript": "^5"
-  }
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "installCommand": "npm install --legacy-peer-deps"
+      }
+    }
+  ]
 }

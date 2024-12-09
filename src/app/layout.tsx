@@ -1,7 +1,11 @@
-import '@/styles/globals.css'
+import './globals.css'
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import type { HostType, PlatformType } from '@microsoft/office-js'
+import { waitForOffice, getEnvironment } from '@/utils/environment'
+
+// Use the global Office types defined in office.d.ts
+type HostType = Office.HostType
+type PlatformType = Office.PlatformType
 
 export const metadata: Metadata = {
   title: 'Accountant Email Assistant',
@@ -13,30 +17,24 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const environment = getEnvironment();
+  
   return (
     <html lang="en">
       <head>
-        <Script 
-          src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
-          strategy="beforeInteractive"
-          onError={(e) => {
-            console.warn('Office.js failed to load:', e)
-            window.Office = {
-              onReady: (callback?: (info: { host: HostType; platform: PlatformType }) => any) => {
-                if (callback) {
-                  callback({ 
-                    host: 'Outlook' as HostType,
-                    platform: 'PC' as PlatformType 
-                  })
-                }
-                return Promise.resolve({ 
-                  host: 'Outlook' as HostType,
-                  platform: 'PC' as PlatformType 
-                })
+        {environment === 'outlook-addin' && (
+          <Script 
+            src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
+            strategy="beforeInteractive"
+            onLoad={() => waitForOffice()}
+            onError={(e) => {
+              console.error('Failed to load Office.js:', e);
+              if (process.env.NODE_ENV === 'development') {
+                console.warn('Using mock Office.js in development');
               }
-            } as typeof Office
-          }}
-        />
+            }}
+          />
+        )}
       </head>
       <body suppressHydrationWarning={true}>
         <div id="office-container">

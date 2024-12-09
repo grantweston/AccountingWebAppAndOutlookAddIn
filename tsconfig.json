@@ -24,7 +24,8 @@
     },
     "types": [
       "jest",
-      "@testing-library/jest-dom"
+      "@testing-library/jest-dom",
+      "office-js"
     ],
     "plugins": [
       {
