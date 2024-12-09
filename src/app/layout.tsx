@@ -1,11 +1,11 @@
-import './globals.css'
+import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import { getEnvironment } from '@/utils/environment'
+import type { HostType, PlatformType } from '@microsoft/office-js'
 
 export const metadata: Metadata = {
   title: 'Accountant Email Assistant',
-  description: 'Email assistant for accountants using Claude AI'
+  description: 'Email assistant for accountants using Claude AI',
 }
 
 export default function RootLayout({
@@ -13,25 +13,36 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const environment = getEnvironment();
-
   return (
     <html lang="en">
       <head>
-        {environment === 'outlook-addin' && (
-          <Script
-            src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
-            strategy="beforeInteractive"
-            onLoad={() => console.log('Office.js loaded')}
-            onError={(e) => console.error('Office.js failed to load:', e)}
-          />
-        )}
+        <Script 
+          src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
+          strategy="beforeInteractive"
+          onError={(e) => {
+            console.warn('Office.js failed to load:', e)
+            window.Office = {
+              onReady: (callback?: (info: { host: HostType; platform: PlatformType }) => any) => {
+                if (callback) {
+                  callback({ 
+                    host: 'Outlook' as HostType,
+                    platform: 'PC' as PlatformType 
+                  })
+                }
+                return Promise.resolve({ 
+                  host: 'Outlook' as HostType,
+                  platform: 'PC' as PlatformType 
+                })
+              }
+            } as typeof Office
+          }}
+        />
       </head>
-      <body>
+      <body suppressHydrationWarning={true}>
         <div id="office-container">
           {children}
         </div>
       </body>
     </html>
   )
-}
+} 
