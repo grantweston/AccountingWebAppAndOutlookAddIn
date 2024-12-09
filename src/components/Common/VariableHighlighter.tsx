@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { VariableDetector } from '../../services/VariableProcessor/detector';
+import React, { useEffect } from 'react';
 import { Variable, VariableStatus } from '../../services/VariableProcessor/types';
-import { Document as SupabaseDocument } from '@/services/Supabase/documentService';
 
 interface VariableHighlighterProps {
   text: string;
   onChange: (text: string) => void;
-  variables?: Variable[];
-  documents?: SupabaseDocument[];
+  variables: Variable[];
+  filledText?: string;
 }
 
 const getHighlightColor = (status: VariableStatus): string => {
@@ -26,23 +24,35 @@ const getHighlightColor = (status: VariableStatus): string => {
 export const VariableHighlighter: React.FC<VariableHighlighterProps> = ({
   text,
   onChange,
-  variables: externalVariables,
+  variables,
+  filledText,
 }) => {
-  const [internalVariables, setInternalVariables] = useState<Variable[]>([]);
-  const variables = externalVariables || internalVariables;
-
   useEffect(() => {
-    if (!externalVariables) {
-      const result = VariableDetector.detect(text);
-      setInternalVariables(result.variables);
-    }
-  }, [text, externalVariables]);
+    const handleCopy = (e: Event) => {
+      if (!(e instanceof ClipboardEvent)) return;
+      e.preventDefault();
+      const textToCopy = filledText || variables.reduce((acc, variable) => {
+        return acc.replace(
+          `[${variable.content}]`,
+          variable.value || `[${variable.content}]`
+        );
+      }, text);
+      e.clipboardData?.setData('text/plain', textToCopy);
+    };
+
+    const element = document.querySelector('.variable-highlighter');
+    element?.addEventListener('copy', handleCopy as EventListener);
+    return () => element?.removeEventListener('copy', handleCopy as EventListener);
+  }, [text, variables, filledText]);
 
   const renderHighlightedText = () => {
     let lastIndex = 0;
     const elements: JSX.Element[] = [];
 
-    variables.forEach((variable, index) => {
+    // Sort variables by their start index to process them in order
+    const sortedVariables = [...variables].sort((a, b) => a.startIndex - b.startIndex);
+
+    sortedVariables.forEach((variable, index) => {
       // Add text before the variable
       if (variable.startIndex > lastIndex) {
         elements.push(
@@ -52,26 +62,24 @@ export const VariableHighlighter: React.FC<VariableHighlighterProps> = ({
         );
       }
 
-      // Add the highlighted variable - show value if filled, otherwise show original
+      // Add the highlighted variable - show value if filled, otherwise show placeholder
       elements.push(
         <span
-          key={variable.id}
+          key={`var-${index}`}
           style={{
             backgroundColor: getHighlightColor(variable.status),
             padding: '0 1px',
             borderRadius: '2px',
           }}
         >
-          {variable.status === VariableStatus.FILLED 
-            ? variable.value 
-            : text.slice(variable.startIndex, variable.endIndex)}
+          {variable.value || text.slice(variable.startIndex, variable.endIndex)}
         </span>
       );
 
       lastIndex = variable.endIndex;
     });
 
-    // Add any remaining text
+    // Add any remaining text after the last variable
     if (lastIndex < text.length) {
       elements.push(
         <span key="text-end">{text.slice(lastIndex)}</span>
@@ -83,7 +91,7 @@ export const VariableHighlighter: React.FC<VariableHighlighterProps> = ({
 
   return (
     <div className="variable-highlighter">
-      <div 
+      <div
         className="editor-container border border-gray-300 rounded-lg"
         style={{ position: 'relative' }}
       >
@@ -98,6 +106,7 @@ export const VariableHighlighter: React.FC<VariableHighlighterProps> = ({
             padding: '8px',
             minHeight: '100px',
           }}
+          data-filled-text={filledText || text}
         >
           {renderHighlightedText()}
         </div>
@@ -121,6 +130,12 @@ export const VariableHighlighter: React.FC<VariableHighlighterProps> = ({
             lineHeight: 'inherit',
             overflow: 'hidden',
             zIndex: 1,
+          }}
+          onCopy={(e) => {
+            if (filledText) {
+              e.preventDefault();
+              e.clipboardData.setData('text/plain', filledText);
+            }
           }}
         />
       </div>

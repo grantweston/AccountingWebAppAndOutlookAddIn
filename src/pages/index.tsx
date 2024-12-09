@@ -120,49 +120,18 @@ export default function Home() {
 
       console.log('Found variables:', foundVariables);
 
-      // Update each variable with found values
-      const updatedVariables = variables.map(variable => {
-        const normalizedVarName = variable.content
-          .replace(/[\[\]]/g, '')
-          .replace(/[_\s]/g, '_')
-          .toUpperCase();
-        
-        const foundValue = foundVariables[normalizedVarName];
-        console.log(`Matching ${normalizedVarName} with value:`, foundValue);
-        
-        // Only update if we actually found a value and it's not "NOT_FOUND"
-        if (foundValue && foundValue !== 'NOT_FOUND' && !foundValue.includes('not clearly shown')) {
-          return {
-            ...variable,
-            value: foundValue,
-            status: VariableStatus.FILLED
-          };
-        }
-        
-        // Keep original content and mark as not found
+      // Update variable statuses and values
+      setVariables(variables.map(variable => {
+        const variableKey = variable.content.replace(/[\[\]]/g, '');
         return {
           ...variable,
-          status: VariableStatus.NOT_FOUND
+          value: foundVariables[variableKey] || '',
+          status: foundVariables[variableKey] ? VariableStatus.FILLED : VariableStatus.NOT_FOUND,
         };
-      });
-
-      console.log('Updated variables:', updatedVariables);
-      setVariables(updatedVariables);
-
-      // Update text with found values
-      let newText = text;
-      updatedVariables.forEach(variable => {
-        if (variable.status === VariableStatus.FILLED && variable.value) {
-          newText = newText.replace(variable.content, variable.value);
-        }
-      });
-
-      console.log('New filled text:', newText);
-      setFilledText(newText);
+      }));
 
     } catch (error) {
-      console.error('Error in handleFillVariables:', error);
-      setVariables(variables.map(v => ({...v, status: VariableStatus.NOT_FOUND})));
+      console.error('Error filling variables:', error);
     } finally {
       setIsProcessing(false);
     }
@@ -269,6 +238,12 @@ export default function Home() {
             text={text} 
             onChange={handleTextChange}
             variables={variables}
+            filledText={variables.reduce((acc, variable) => {
+              return acc.replace(
+                `[${variable.content}]`,
+                variable.value || `[${variable.content}]`
+              );
+            }, text)}
           />
         </div>
 
